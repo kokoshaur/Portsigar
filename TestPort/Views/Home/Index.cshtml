@@ -18,16 +18,80 @@
 
 
 <script type="text/javascript">
-    if (@wifi() == 0) {
+    $.ajax({
+        type: 'GET',
+        url: 'Flex/WifiIsReady',
+        data: 0,
+        success: function (data) {
+            if (data == 0) {
+                var name = prompt("Это ваш первый запуск! Спасибо, что пользуетесь портсигар. Введите пожалуйста имя сети wifi");
+                var pas = prompt("Отлично, а теперь пороль");
+                var isYes = confirm("Итак, вы хотите бросить курить?");
 
-        
-    }
+                $.ajax({
+                    type: 'POST',
+                    url: 'Flex/RefreshWifi',
+                    data: name + "#" + pas,
 
-        if (@isFirst() == 1) {
+                    success: function (data) {
+                        if (data == 0)
+                            alert("Неверные данные");
+                    },
+                    error: function () {
+                        alert("Произошел сбой");
+                    }
+                });
+            }
+        },
+        error: function () {
+            alert("Произошел сбой");
+        }
+    });
+    
+    $.ajax({
+        type: 'GET',
+        url: 'Flex/IsFirstStart',
+        data: 0,
+        success: function (data) {
+            if (data == 1) {
+                var cout = prompt("Вот и хорошо, преступим. Введите кол-во выкуриваемых в день сигарет");
+                $.ajax({
+                    type: 'POST',
+                    url: 'Flex/RefreshSigar',
+                    data: cout,
+                    success: function (data) {
+                        if (data == 1)
+                            alert("Всё хорошо, приятного пользования");
+                        else {
+                            alert("Некорректное число");
+                        }
+                    },
+                    error: function () {
+                        alert("Произошел сбой");
+                    }
+                });
+            }
+        },
+        error: function () {
+            alert("Произошел сбой");
+        }
+    });
 
-    }
     var oHide = document.querySelector(".buttonHide");
-    var next = @GetNum();
+    var next;
+
+    $.ajax({
+        type: 'GET',
+        url: 'Flex/GetNextNum',
+        i: 0,
+        success: function (i) {
+            next = i;
+        },
+        error: function () {
+            alert("Произошел сбой");
+        }
+    });
+
     function timerStart()
     {
         if (next == 0)
@@ -43,60 +107,65 @@
     }
 
     $(function(){
-        setInterval("timerStart()", 1);
+        setInterval("timerStart()", 1000);
     });
 
     function drop()
     {
-        if (@isOpen() == 1) {
-            document.getElementById("drop").style.display = 'none';
-            alert('Заберите Сабж');
-            if (@GetSubj() == 1)
-                next = @GetNum();
-        } else {
-            alert('Хм, произошла неизвестная ошибка, странно');
-            document.getElementById("drop").style.display = 'none';
-            next = 10000;
-        }
+        $.ajax({
+            type: 'GET',
+            url: 'Flex/IsOpen',
+            i: 0,
+            success: function (i) {
+                if (i == 1) {
+                    document.getElementById("drop").style.display = 'none';
+                    alert('Заберите Сабж');
+                    $.ajax({
+                        type: 'GET',
+                        url: 'Flex/GetSubj',
+                        i: 0,
+                        success: function (i) {
+                            if (i == 1) {
+                                $.ajax({
+                                    type: 'GET',
+                                    url: 'Flex/GetNextNum',
+                                    i: 0,
+                                    success: function (i) {
+                                        next = i;
+                                    },
+                                    error: function () {
+                                        alert("Произошел сбой");
+                                    }
+                                });
+                            }
+                        },
+                        error: function () {
+                            alert("Произошел сбой");
+                        }
+                    });
+                } else {
+                    alert('Хм, произошла неизвестная ошибка, странно');
+                    document.getElementById("drop").style.display = 'none';
+                    $.ajax({
+                        type: 'GET',
+                        url: 'Flex/GetNextNum',
+                        i: 0,
+                        success: function (i) {
+                            next = i;
+                        },
+                        error: function () {
+                            alert("Произошел сбой");
+                        }
+                    });
+                }
+            },
+            error: function () {
+                alert("Произошел сбой");
+            }
+        });
+
+        
         end();
-    }
-
-    @functions
-{       //Это GET запросы
-        public int GetNum()
-        {
-            return Saver.Show();
-        }
-
-        public int isOpen()
-        {
-            return Saver.isOpen();
-        }
-
-        public int GetSubj()
-        {
-            return Saver.GetSubj();
-        }
-
-        public int wifi()
-        {
-            return Saver.wiFiAsync();
-        }
-
-        public int isFirst()
-        {
-            return Saver.isFirst();
-        }
-
-        public void refreshWifi(string name, string pas)
-        {
-            Saver.CreateWifi(name, pas);
-        }
-
-        public void refreshSigar(int i)
-        {
-            Saver.Refresh(i);
-        }
     }
 </script>
 

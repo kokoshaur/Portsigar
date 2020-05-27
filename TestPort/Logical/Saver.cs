@@ -12,7 +12,7 @@ namespace TestPort.Logical
     {
         private static Extractor Subj = null;
 
-        public static bool Refresh(int subjPerDay)
+        public static int Refresh(int subjPerDay)
         {
             FileStream extractor = new FileStream("extract.json", FileMode.OpenOrCreate);
             BinaryFormatter formatter = new BinaryFormatter();
@@ -25,7 +25,7 @@ namespace TestPort.Logical
             Subj = (Extractor)formatter.Deserialize(extractor);
             extractor.Close();
 
-            return true;
+            return 1;
         }
         public static int Show(int subjPerDay = 5)
         {
@@ -47,7 +47,7 @@ namespace TestPort.Logical
             
             return Subj.NextSiggaret();
         }
-
+        [Serializable]
         struct wifiReq
         {
             public string name;
@@ -93,7 +93,7 @@ namespace TestPort.Logical
             formatter.Serialize(wifi, T);
             wifi.Close();
 
-            return 1;
+            return wiFiAsync();
         }
 
         public static int isFirst()
