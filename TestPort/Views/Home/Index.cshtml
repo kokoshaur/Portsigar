@@ -1,0 +1,102 @@
+﻿@using TestPort.Controllers
+@using TestPort.Logical
+
+@{
+    ViewData["Title"] = "Главная";
+}
+
+<div class="text-center">
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/js/site.js"></script>
+
+    <h1 class="display-4">Спасибо что пользуетесь Портсигар!</h1>
+    <p>До сигареты всего каких-то:</p>
+    <b class="timer"></b>
+
+    <p><button class="button button1" style="display: none;" id="drop" onclick="drop();">Забрать</button></p>
+</div>
+
+
+<script type="text/javascript">
+    if (@wifi() == 0) {
+
+        
+    }
+
+        if (@isFirst() == 1) {
+
+    }
+    var oHide = document.querySelector(".buttonHide");
+    var next = @GetNum();
+    function timerStart()
+    {
+        if (next == 0)
+        {
+            $('.timer').html("Сейчас");
+            document.getElementById("drop").style.display = 'inline';
+            end();
+        }
+        else{
+            $('.timer').html(next + " секунд");
+        }
+        next--;
+    }
+
+    $(function(){
+        setInterval("timerStart()", 1);
+    });
+
+    function drop()
+    {
+        if (@isOpen() == 1) {
+            document.getElementById("drop").style.display = 'none';
+            alert('Заберите Сабж');
+            if (@GetSubj() == 1)
+                next = @GetNum();
+        } else {
+            alert('Хм, произошла неизвестная ошибка, странно');
+            document.getElementById("drop").style.display = 'none';
+            next = 10000;
+        }
+        end();
+    }
+
+    @functions
+{       //Это GET запросы
+        public int GetNum()
+        {
+            return Saver.Show();
+        }
+
+        public int isOpen()
+        {
+            return Saver.isOpen();
+        }
+
+        public int GetSubj()
+        {
+            return Saver.GetSubj();
+        }
+
+        public int wifi()
+        {
+            return Saver.wiFiAsync();
+        }
+
+        public int isFirst()
+        {
+            return Saver.isFirst();
+        }
+
+        public void refreshWifi(string name, string pas)
+        {
+            Saver.CreateWifi(name, pas);
+        }
+
+        public void refreshSigar(int i)
+        {
+            Saver.Refresh(i);
+        }
+    }
+</script>
+

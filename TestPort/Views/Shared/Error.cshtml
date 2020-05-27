@@ -1,0 +1,25 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h1 class="text-danger">Ошибка(</h1>
+<h2 class="text-danger">Произошла какая то ошибка, смотри трасировку.</h2>
+
+@if (Model.ShowRequestId)
+{
+    <p>
+        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+    </p>
+}
+
+<h3>Режим отладки</h3>
+<p>
+    Простомтреть <strong>Отладочную</strong> информация
+</p>
+<p>
+    <strong>Если трассировка не вывелась, значит всё плохо.</strong>
+    Вы в режиме отладки.
+    Для локального дефаггинга поставьте <strong>точку остановки</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
+    и перезапусти.
+</p>
